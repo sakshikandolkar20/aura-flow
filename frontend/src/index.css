@@ -1,0 +1,213 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Global Design Tokens ─── */
+:root {
+  --aura-bg: #0a0f1e;
+  --aura-surface: rgba(15, 23, 42, 0.55);
+  --aura-border: rgba(255, 255, 255, 0.08);
+  --aura-accent: #38bdf8;
+  --aura-glow: #0ea5e9;
+  --aura-teal: #2dd4bf;
+  --glass-blur: 20px;
+}
+
+/* ─── Base Resets ─── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* offset for fixed navbar */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
+  background: var(--aura-bg);
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar Styling ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.25);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.4);
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: rgba(56, 189, 248, 0.3);
+  color: #fff;
+}
+
+/* ─── Glass Card Utility ─── */
+@layer components {
+  .glass-card {
+    background: var(--aura-surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--aura-border);
+    border-radius: 1rem;
+    /* Inner subtle light gradient for depth */
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+      0 0 0 0 transparent;
+    transition:
+      background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    background: rgba(15, 23, 42, 0.7);
+    border-color: rgba(56, 189, 248, 0.15);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+      0 0 30px rgba(56, 189, 248, 0.08),
+      0 8px 40px rgba(14, 165, 233, 0.06),
+      0 0 80px rgba(56, 189, 248, 0.03);
+  }
+
+  .glow-text {
+    background: linear-gradient(135deg, #38bdf8, #2dd4bf, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glow-border {
+    position: relative;
+  }
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(56, 189, 248, 0.25),
+      rgba(45, 212, 191, 0.12),
+      rgba(167, 139, 250, 0.08),
+      transparent 60%
+    );
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: xor;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+    opacity: 0.6;
+  }
+  .glow-border:hover::after {
+    opacity: 1;
+  }
+
+  /* ─── Nav link effect ─── */
+  .nav-link {
+    @apply relative text-sm text-slate-400 transition-colors duration-300;
+  }
+  .nav-link::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-0 h-px bg-sky-400 transition-all duration-300;
+  }
+  .nav-link:hover {
+    @apply text-white;
+  }
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  /* ─── Input styling ─── */
+  .aura-input {
+    @apply block w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3
+           text-white placeholder-slate-500 outline-none
+           transition-all duration-300;
+  }
+  .aura-input:focus {
+    @apply border-sky-500/50 ring-2 ring-sky-500/20 bg-white/[0.06];
+    box-shadow: 0 0 24px rgba(14, 165, 233, 0.12);
+  }
+
+  /* ─── Primary Button ─── */
+  .aura-btn-primary {
+    @apply relative px-8 py-3.5 rounded-xl font-semibold text-white overflow-hidden
+           bg-gradient-to-r from-sky-600 via-cyan-500 to-teal-400
+           shadow-lg shadow-sky-600/25
+           transition-all duration-300;
+  }
+  .aura-btn-primary::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-sky-500 via-cyan-400 to-teal-300
+           opacity-0 transition-opacity duration-300;
+  }
+  .aura-btn-primary:hover::before {
+    opacity: 1;
+  }
+  .aura-btn-primary:hover {
+    @apply shadow-sky-500/40 -translate-y-0.5;
+    box-shadow:
+      0 10px 40px rgba(14, 165, 233, 0.3),
+      0 0 60px rgba(56, 189, 248, 0.15);
+  }
+  .aura-btn-primary:active {
+    @apply translate-y-0;
+  }
+  .aura-btn-primary:disabled {
+    @apply opacity-50 cursor-not-allowed translate-y-0;
+  }
+  .aura-btn-primary:disabled::before {
+    display: none;
+  }
+
+  /* ─── Secondary / Ghost Button ─── */
+  .aura-btn-ghost {
+    @apply px-8 py-3.5 rounded-xl font-semibold text-slate-300
+           border border-white/10
+           transition-all duration-300;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .aura-btn-ghost:hover {
+    @apply text-white border-white/20;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.06);
+  }
+}
+
+/* ─── Number input spinners hide ─── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* ─── Recharts dark theme overrides ─── */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.06);
+}
+.recharts-text {
+  fill: #94a3b8;
+  font-size: 12px;
+}
+.recharts-tooltip-wrapper {
+  outline: none;
+}

@@ -3,17 +3,26 @@ from flask_cors import CORS
 import joblib
 import numpy as np
 import logging
+import sys
+import io
 from pathlib import Path
 
 from save_model import build_and_save_model
 
+# Fix Windows console encoding for Unicode output
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+if sys.stderr.encoding != 'utf-8':
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
 app = Flask(__name__)
-CORS(app)   # ✅ allow React to connect
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins (React on :5173)
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
 
 def load_model():
+    """Load the most recent .pkl model, or rebuild if none found."""
     model_candidates = sorted(
         Path(".").glob("co2_model*.pkl"),
         key=lambda path: path.stat().st_mtime,
@@ -23,50 +32,56 @@ def load_model():
     for model_file in model_candidates:
         try:
             logging.info(f"Loading model: {model_file}")
-            return joblib.load(model_file)
+            m = joblib.load(model_file)
+            print(f"[OK] Model loaded successfully from {model_file}")
+            return m
         except Exception as error:
             logging.warning(f"Failed to load {model_file}: {error}")
 
     logging.warning("No loadable model found, rebuilding model...")
-    return build_and_save_model()
+    m = build_and_save_model()
+    print("[OK] Model rebuilt and loaded successfully")
+    return m
 
 
 model = load_model()
 
 # -------------------------------
-# ✅ HOME ROUTE
+# HOME ROUTE
 # -------------------------------
 @app.route("/")
 def home():
-    return "🚀 CO2 Backend Running"
+    return "CO2 Backend Running"
 
 # -------------------------------
-# ✅ HEALTH CHECK
+# HEALTH CHECK
 # -------------------------------
 @app.route("/health")
 def health():
     return jsonify({"status": "Backend running"})
 
 # -------------------------------
-# ✅ SINGLE PREDICTION (IMPROVED)
+# SINGLE PREDICTION
 # -------------------------------
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
+        logging.info(f"Received prediction request: {data}")
 
         required_fields = [
             'time_min', 'occupancy', 'ventilation_efficiency',
             'ventilation_rate', 'temperature_c', 'humidity_pct'
         ]
 
-        # 🔥 Validation
+        # Validation
         for field in required_fields:
             if field not in data:
+                logging.error(f"Missing field: {field}")
                 return jsonify({"error": f"{field} missing"}), 400
 
-        # Convert input → array
-        features = np.array([[data[f] for f in required_fields]])
+        # Convert input to array (explicit float cast)
+        features = np.array([[float(data[f]) for f in required_fields]])
 
         # Prediction
         prediction = model.predict(features)[0]
@@ -79,25 +94,26 @@ def predict():
         else:
             status = "High"
 
-        # Logging
-        logging.info(f"Prediction: {prediction} | Input: {data}")
-
-        return jsonify({
+        result = {
             "predicted_co2": round(float(prediction), 2),
             "status": status
-        })
+        }
+
+        logging.info(f"Prediction result: {result}")
+        return jsonify(result)
 
     except Exception as e:
+        logging.error(f"Prediction error: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 
 # -------------------------------
-# 🔥 BATCH PREDICTION (ADVANCED)
+# BATCH PREDICTION
 # -------------------------------
 @app.route("/predict_batch", methods=["POST"])
 def predict_batch():
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
 
         features = np.array([
             [
@@ -123,5 +139,10 @@ def predict_batch():
 # RUN SERVER
 # -------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
-    
+    print("=" * 50)
+    print("AuraFlow Backend starting...")
+    print("  -> http://127.0.0.1:5000")
+    print("  -> POST /predict  (single prediction)")
+    print("  -> GET  /health   (health check)")
+    print("=" * 50)
+    app.run(host="127.0.0.1", port=5000, debug=True)

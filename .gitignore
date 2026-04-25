@@ -1,0 +1,45 @@
+# ─── Dependencies ───
+node_modules/
+frontend/node_modules/
+.venv/
+venv/
+env/
+
+# ─── Build outputs ───
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.egg-info/
+
+# ─── IDE / Editor ───
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS files ───
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Environment & secrets ───
+.env
+.env.local
+.env.production
+
+# ─── Logs ───
+*.log
+npm-debug.log*
+
+# ─── History ───
+.history/
+
+# ─── Misc ───
+*.pkl
