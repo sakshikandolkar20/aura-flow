@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, lazy, Suspense } from 'react'
 import Hero3D from '../components/Hero3D'
+
+const UnityDemo = lazy(() => import('../components/UnityDemo'))
 
 /* ═══════════════════════════════════
    SMOOTH SCROLL HELPER
@@ -284,63 +286,25 @@ export default function LandingPage() {
         </div>
       </ScrollSection>
 
-      {/* ════════════════  DEMO PREVIEW  ════════════════ */}
+      {/* ════════════════  TRY IT LIVE — UNITY WEBGL  ════════════════ */}
       <ScrollSection id="demo" className="relative z-10 px-6 py-24 max-w-5xl mx-auto">
         <SectionHeading
-          badge="Live Demo"
+          badge="Try It Live"
           title="See AuraFlow in Action"
-          subtitle="Click below to try the prediction dashboard with sample ICU data."
+          subtitle="Interact with the AuraFlow ICU simulation directly in your browser — powered by Unity WebGL."
         />
-        <motion.div
-          onClick={() => navigate('/dashboard')}
-          className="cursor-pointer group"
-          whileHover={{ scale: 1.02, y: -4 }}
-          whileTap={{ scale: 0.99 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
+        <Suspense
+          fallback={
+            <div className="glass-card glow-border rounded-2xl overflow-hidden flex items-center justify-center" style={{ aspectRatio: '16 / 10' }}>
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-sky-500/30 border-t-sky-400 rounded-full animate-spin" />
+                <span className="text-xs text-slate-500 tracking-wider">Preparing demo…</span>
+              </div>
+            </div>
+          }
         >
-          <div className="glass-card glow-border relative overflow-hidden py-14 text-center rounded-2xl">
-            {/* Faux UI Preview */}
-            <div className="flex flex-col items-center gap-4">
-              <div className="flex gap-3 justify-center mb-2">
-                <div className="w-28 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] animate-pulse" style={{ animationDelay: '0s' }} />
-                <div className="w-28 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] animate-pulse" style={{ animationDelay: '0.3s' }} />
-                <div className="w-28 h-8 rounded-lg bg-white/[0.04] border border-white/[0.08] animate-pulse" style={{ animationDelay: '0.6s' }} />
-              </div>
-              <div className="w-44 h-10 rounded-xl bg-gradient-to-r from-sky-600 to-teal-500 flex items-center justify-center text-sm font-semibold text-white shadow-lg shadow-sky-600/20">
-                Predict CO₂
-              </div>
-              <div className="mt-4 flex items-center gap-3">
-                <span className="text-4xl font-bold text-white">482</span>
-                <span className="text-sm text-slate-400">ppm</span>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  Optimal
-                </span>
-              </div>
-              {/* Mini chart bars */}
-              <div className="flex items-end gap-1 mt-2 h-8">
-                {[3, 5, 4, 7, 6, 8, 5, 9, 6, 7, 8, 5].map((h, i) => (
-                  <motion.div
-                    key={i}
-                    className="w-2 rounded-full bg-gradient-to-t from-sky-500/60 to-teal-400/40"
-                    initial={{ height: 0 }}
-                    whileInView={{ height: `${h * 3.5}px` }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.05 }}
-                  />
-                ))}
-              </div>
-            </div>
-            {/* Hover overlay */}
-            <div className="absolute inset-0 flex items-center justify-center bg-[#0a0f1e]/70 opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-2xl backdrop-blur-sm">
-              <span className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-sky-600 to-teal-500 font-semibold text-white shadow-lg shadow-sky-600/30 flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                Try it Live
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
-            </div>
-          </div>
-        </motion.div>
+          <UnityDemo />
+        </Suspense>
       </ScrollSection>
 
       {/* ════════════════  FINAL CTA  ════════════════ */}
