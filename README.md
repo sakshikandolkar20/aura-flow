@@ -16,6 +16,7 @@
   <img src="https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white" />
   <img src="https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" />
   <img src="https://img.shields.io/badge/Three.js-3D-000000?style=flat-square&logo=three.js&logoColor=white" />
+  <img src="https://img.shields.io/badge/Unity-WebGL-000000?style=flat-square&logo=unity&logoColor=white" />
   <img src="https://img.shields.io/badge/scikit--learn-ML-F7931E?style=flat-square&logo=scikitlearn&logoColor=white" />
 </p>
 
@@ -97,7 +98,8 @@ aura-farm/
 │       ├── components/
 │       │   ├── Hero3D.jsx     # Hero section (image + 3D + animations)
 │       │   ├── HeroCanvas.jsx # Three.js canvas (particles + sphere)
-│       │   └── Charts.jsx     # Recharts components (3 chart types)
+│       │   ├── Charts.jsx     # Recharts components (3 chart types)
+│       │   └── UnityDemo.jsx  # Unity WebGL embed (lazy-loaded)
 │       ├── pages/
 │       │   ├── LandingPage.jsx # Landing page with scroll sections
 │       │   └── Dashboard.jsx   # Prediction form + results + charts
@@ -244,6 +246,36 @@ The interface features a **futuristic healthcare AI aesthetic** with:
 - **Micro-animations** — Staggered fade-ins, hover lift effects, glow pulses (Framer Motion)
 - **Dark theme** — Deep navy palette (`#0a0f1e`) with sky-blue and teal accents
 - **DM Sans** typography — Clean, modern font from Google Fonts
+
+---
+
+## 🚀 Live Demo
+
+AuraFlow includes an **interactive Unity WebGL demo** embedded directly in the landing page — no plugins or downloads required.
+
+To try it locally:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Then open **http://localhost:5173** and scroll to the **"Try It Live"** section, or visit the standalone build at:
+
+```
+http://localhost:5173/unity/index.html
+```
+
+---
+
+## 🎮 Unity Integration
+
+A Unity WebGL build of the ICU simulation is embedded in the React frontend and loaded dynamically inside the **"Try It Live"** section.
+
+- **Location:** `frontend/public/unity/`
+- **Component:** `src/components/UnityDemo.jsx`
+- **Loading:** Lazy-loaded via Intersection Observer — the Unity engine only initializes when the section scrolls into view, keeping initial page load fast.
 
 ---
 
