@@ -22,3 +22,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# --- Unity specific ---
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Build]/
+/[Builds]/
+/[Logs]/
+/[MemoryCaptures]/
+/[UserSettings]/
+
+# Never ignore Asset meta files
+!/[Aa]ssets/**/*.meta
+
+# Ignore specific Unity generated files
+sysinfo.txt
+*.unitypackage
+*.sln
+*.csproj
+*.dotSettings.user
+*.userprefs
