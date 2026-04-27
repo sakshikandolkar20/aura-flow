@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CO2TrendChart, PredictionAreaChart, ParameterImpactChart } from '../components/Charts'
 
-const API_URL = 'http://127.0.0.1:5000/predict'
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL?.replace(/\/$/, '') ||
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ||
+  (import.meta.env.PROD ? '' : 'http://127.0.0.1:5000')
+const API_URL = `${API_BASE_URL}/predict`
 
 /* ─── Helpers ─── */
 const statusMeta = {
